@@ -353,7 +353,17 @@ class MainWindow:
 
     def entry_update_file_location(self):
         file_location = self.entry_file_location_entry.get()
-        if fm.FileNameMethods.check_file_location_valid(file_location):
+        if file_location == "":
+        # Check if folder was chosen by clicking "choose file", the function clears the entry: ""
+            # Use self.user_entry.file_location if valid
+            if fm.FileNameMethods.check_file_location_valid(self.user_entry.file_location):
+                pass
+            # Use new manual entry if valid
+            elif fm.FileNameMethods.check_file_location_valid(file_location):
+                self.user_entry.file_location = file_location
+            else:
+                self.user_entry.file_location = FILE_LOCATION
+        elif fm.FileNameMethods.check_file_location_valid(file_location):
             self.user_entry.file_location = file_location
         else:
             self.user_entry.file_location = FILE_LOCATION
@@ -503,12 +513,16 @@ class MainWindow:
         self.entry_file_location.delete(0, END)
 
         file_type = [('csv', '*.csv')]
+        print("***SG Test self.user_entry.file_location: ", self.user_entry.file_location)
         file_full_name = filedialog.askopenfilename(initialdir=self.user_entry.file_location,
                                                     title="Select File", filetypes=file_type,
                                                     defaultextension=file_type)
+        print("***SG Test file_full_name: ", file_full_name)
         self.user_entry.file_name = os.path.splitext(os.path.basename(file_full_name))[0]
         self.user_entry.file_suffix = os.path.splitext(os.path.basename(file_full_name))[1]
         self.user_entry.file_location = os.path.dirname(file_full_name)
+        print("***SG Test file_full_name: ", file_full_name)
+        print("***SG Test self.user_entry.file_location: ", self.user_entry.file_location)
 
         self.entry_file_name.insert(0, (self.user_entry.file_name + self.user_entry.file_suffix))
         self.entry_file_location.insert(0, os.path.normcase(self.user_entry.file_location))
